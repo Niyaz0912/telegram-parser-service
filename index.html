@@ -1,47 +1,187 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Парсер Telegram для сбора сообщений по ключевым словам">
+
     <title>Telegram Parser</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-            line-height: 1.6;
-            color: #333;
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">
+    <link rel="stylesheet" href="font-awesome-4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/tooplate-style.css">
+
+    <script>
+        var renderPage = true;
+
+        if (navigator.userAgent.indexOf('MSIE') !== -1
+            || navigator.appVersion.indexOf('Trident/') > 0) {
+            alert("Для корректной работы используйте современный браузер (Chrome, Edge, Firefox).");
+            renderPage = false;
         }
-        h1 { color: #2d3748; }
-        .btn {
-            display: inline-block;
-            background: #3182ce;
+    </script>
+
+    <style>
+        .download-btn {
+            background-color: #3182ce;
             color: white;
-            padding: 15px 30px;
+            padding: 20px 50px;
+            font-size: 1.8rem;
             border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
-            margin: 20px 0;
+            display: inline-block;
+            margin: 30px 0;
+            transition: background-color 0.3s;
         }
-        footer { margin-top: 40px; color: #666; }
-        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+        .download-btn:hover {
+            background-color: #2c5282;
+            color: white;
+            text-decoration: none;
+        }
+        .step-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3182ce;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        code {
+            background-color: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .container-narrow {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
     </style>
+
 </head>
+
 <body>
-    <h1>Telegram Parser</h1>
-    <p>Скрипт для сбора сообщений из Telegram-чатов по ключевым словам.</p>
-    
-    <a href="TelegramParser.zip" class="btn">Скачать архив (ZIP)</a>
-    
-    <h2>Как использовать:</h2>
-    <ol>
-        <li>Получите API ключи на <a href="https://my.telegram.org">my.telegram.org</a>.</li>
-        <li>Распакуйте архив, настройте <code>config.json</code>.</li>
-        <li>Запустите <code>python parser.py</code>, введите ссылку на чат и ключевые слова.</li>
-        <li>Результаты в файле <code>messages.csv</code>.</li>
-    </ol>
-    
-    <footer>© 2026 Telegram Parser. Для анализа чатов.</footer>
+    <!-- Loader -->
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
+
+    <div class="container container-narrow">
+        <!-- Шапка -->
+        <section class="tm-section-head" id="top" style="padding: 60px 0 40px;">
+            <header id="header" class="text-center">
+                <h1 style="color: #2d3748; font-size: 3rem; margin-bottom: 20px;">Telegram Parser</h1>
+                <p style="color: #4a5568; font-size: 1.2rem;">Скрипт для сбора сообщений из Telegram-чатов по ключевым словам</p>
+            </header>
+        </section>
+
+        <!-- Кнопка скачивания -->
+        <section class="text-center" style="margin: 50px 0;">
+            <a href="TelegramParser.zip" class="download-btn">
+                <i class="fa fa-download"></i> Скачать TelegramParser.zip
+            </a>
+            <p style="color: #666; margin-top: 15px;">Архив содержит скрипт, конфиг и инструкцию (~2.5 MB)</p>
+        </section>
+
+        <!-- Инструкция -->
+        <section id="instructions" style="margin: 60px 0;">
+            <h2 style="color: #2d3748; margin-bottom: 40px; text-align: center;">Как использовать</h2>
+            
+            <div class="step-box">
+                <h3>1. Получите API ключи</h3>
+                <p>Перейдите на <a href="https://my.telegram.org" target="_blank">my.telegram.org</a> и создайте приложение:</p>
+                <ul>
+                    <li>Войдите в свой аккаунт Telegram</li>
+                    <li>Перейдите в раздел <strong>API Development Tools</strong></li>
+                    <li>Заполните поля (любые данные) и создайте приложение</li>
+                    <li>Сохраните <code>api_id</code> и <code>api_hash</code></li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3>2. Настройте конфигурацию</h3>
+                <p>Распакуйте архив и откройте файл <code>config.json</code> в текстовом редакторе:</p>
+                <pre style="background: #edf2f7; padding: 15px; border-radius: 6px; overflow-x: auto;">
+{
+  "api_id": "ВАШ_API_ID",
+  "api_hash": "ВАШ_API_HASH",
+  "keywords": ["парсинг", "анализ", "сбор данных"],
+  "exclude_words": ["спам", "реклама"],
+  "limit_messages": 1000
+}</pre>
+                <p>Вставьте свои <code>api_id</code> и <code>api_hash</code>, укажите ключевые слова для поиска.</p>
+            </div>
+
+            <div class="step-box">
+                <h3>3. Установите зависимости</h3>
+                <p>Убедитесь, что у вас установлен Python 3.8 или выше, затем установите библиотеку Telethon:</p>
+                <pre style="background: #edf2f7; padding: 15px; border-radius: 6px;">
+pip install telethon</pre>
+                <p>Или используйте файл <code>requirements.txt</code> из архива:</p>
+                <pre style="background: #edf2f7; padding: 15px; border-radius: 6px;">
+pip install -r requirements.txt</pre>
+            </div>
+
+            <div class="step-box">
+                <h3>4. Запустите парсер</h3>
+                <p>Откройте терминал/командную строку в папке с распакованными файлами и выполните:</p>
+                <pre style="background: #edf2f7; padding: 15px; border-radius: 6px;">
+python parser.py</pre>
+                <p>Скрипт запросит:</p>
+                <ol>
+                    <li>Ссылку на чат (например: <code>@publicchat</code> или <code>t.me/joinchat/XXXXXX</code>)</li>
+                    <li>Подтверждение начала парсинга</li>
+                </ol>
+                <p>Парсер начнет сбор сообщений с учетом указанных ключевых слов.</p>
+            </div>
+
+            <div class="step-box">
+                <h3>5. Получите результаты</h3>
+                <p>После завершения работы скрипта откройте файл <code>messages.csv</code>:</p>
+                <ul>
+                    <li>Все найденные сообщения с датой, автором и текстом</li>
+                    <li>Файл готов для импорта в Excel, Google Таблицы или любой анализатор</li>
+                    <li>Логи работы сохраняются в <code>parser.log</code></li>
+                </ul>
+            </div>
+
+            <div class="step-box" style="background-color: #e6fffa; border-left-color: #38b2ac;">
+                <h3>📁 Структура архива</h3>
+                <ul>
+                    <li><code>parser.py</code> — основной скрипт парсера</li>
+                    <li><code>config.json</code> — файл настроек</li>
+                    <li><code>requirements.txt</code> — зависимости Python</li>
+                    <li><code>README.txt</code> — подробная инструкция</li>
+                    <li><code>example_output.csv</code> — пример результата</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Футер -->
+        <footer style="margin: 80px 0 40px; text-align: center; color: #666; border-top: 1px solid #e2e8f0; padding-top: 30px;">
+            <p>© 2026 Telegram Parser. Скрипт для анализа Telegram-чатов.</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">
+                Дизайн на основе шаблона <a href="http://www.tooplate.com/view/2103-central" target="_blank">Central</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Минимальные скрипты -->
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            if (renderPage) {
+                $('body').addClass('loaded');
+            }
+        });
+    </script>
 </body>
 </html>
