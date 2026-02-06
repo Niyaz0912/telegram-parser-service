@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Parser</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 { color: #2d3748; }
+        .btn {
+            display: inline-block;
+            background: #3182ce;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        footer { margin-top: 40px; color: #666; }
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Telegram Parser</h1>
+    <p>Скрипт для сбора сообщений из Telegram-чатов по ключевым словам.</p>
+    
+    <a href="TelegramParser.zip" class="btn">Скачать архив (ZIP)</a>
+    
+    <h2>Как использовать:</h2>
+    <ol>
+        <li>Получите API ключи на <a href="https://my.telegram.org">my.telegram.org</a>.</li>
+        <li>Распакуйте архив, настройте <code>config.json</code>.</li>
+        <li>Запустите <code>python parser.py</code>, введите ссылку на чат и ключевые слова.</li>
+        <li>Результаты в файле <code>messages.csv</code>.</li>
+    </ol>
+    
+    <footer>© 2026 Telegram Parser. Для анализа чатов.</footer>
+</body>
+</html>
